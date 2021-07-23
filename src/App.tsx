@@ -1,26 +1,22 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, useState } from 'react'
+import { ConfigProvider } from 'antd'
+import { Provider, observer } from 'mobx-react'
 
-function App() {
+import Store from './store'
+import Pages from './Pages'
+
+const App: FC = () => {
+  const [store] = useState(new Store())
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Provider appStore={store}>
+      <React.StrictMode>
+        <ConfigProvider>
+          <Pages />
+        </ConfigProvider>
+      </React.StrictMode>
+    </Provider>
+  )
 }
 
-export default App;
+export default observer(App)
