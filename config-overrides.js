@@ -6,7 +6,8 @@ const {
   addLessLoader,
   fixBabelImports,
   addDecoratorsLegacy,
-  addWebpackAlias
+  addWebpackAlias,
+  overrideDevServer
 } = require('customize-cra')
 
 module.exports = {
@@ -27,5 +28,17 @@ module.exports = {
     addLessLoader({
       javascriptEnabled: true
     })
-  )
+  ),
+  devServer: overrideDevServer(config => {
+    config.proxy = {
+      '/api': {
+        target: require('./dev-api-host'),
+        pathRewrite: { '^/api': '/' },
+        changeOrigin: true,
+        secure: false,
+      },
+    }
+
+    return config
+  })
 }

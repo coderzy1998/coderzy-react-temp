@@ -12,12 +12,10 @@ interface API {
 const cancelMap = new WeakMap<Promise<any>, () => void>()
 const prevMap = new Map<(...params: any[]) => Promise<any>, Promise<any>>()
 const { protocol, host } = window.location
-const baseURL: string = process.env.NODE_ENV === 'production'
-  ? (process.env.REACT_APP_API_HOST || `${protocol}//${host}`)
-  : `${protocol}//${process.env.WDS_SOCKET_HOST}:${process.env.WDS_SOCKET_PORT}/api`
+const domain: string = protocol + '//' + host
 
 const api = axios.create({
-  baseURL,
+  baseURL: domain + (process.env.NODE_ENV !== 'production' ? '/api' : ''),
   timeout: 0,
   withCredentials: true
 })
@@ -59,10 +57,6 @@ function resultHandle(config: AxiosRequestConfig, operate: () => Promise<any>) {
 
 function resolveHandle(res: AxiosResponse<any>) {
   const { data, code, msg } = res.data
-
-  // 44 为未登录
-  if(code - 0 === 44)
-    window.location.href = data.url
 
   // 不等于 0 为系统错误
   if(code !== 0)
